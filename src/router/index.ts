@@ -18,22 +18,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/doubleballaward',
     name: 'doubleballaward',
-    component: () => import('../views/lotto/DoubleBallAward.vue'),
+    component: () => import('@/views/lotto/DoubleBallAward.vue'),
   },
   {
     path: '/doubleball',
     name: 'doubleball',
-    component: () => import('../views/lotto/DoubleBall.vue'),
+    component: () => import('@/views/lotto/DoubleBall.vue'),
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/LoginRegister.vue'),
+    component: () => import('@/views/LoginRegister.vue'),
   },
   {
     path: '/:catchAll(.*)',
     name: '/404',
-    component: () => import('../views/NotFound404.vue'),
+    component: () => import('@/views/404.vue'),
   },
 ];
 

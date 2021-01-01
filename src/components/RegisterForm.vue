@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-31 13:27:02
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 19:49:39
+ * @LastEditTime: 2021-01-01 01:35:00
  * @Description: 注册用户
 -->
 <template lang="pug">
@@ -36,11 +36,13 @@ export default {
     },
   },
   setup() {
-    const internalInstance = getCurrentInstance();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    const { ctx } = getCurrentInstance();
 
     const handleRegister = (formName: string) => {
       // eslint-disable-next-line consistent-return
-      internalInstance.ctx.$refs[formName].validate((valid: boolean) => {
+      ctx.$refs[formName].validate((valid: boolean) => {
         if (valid) {
           console.log('success');
         } else {

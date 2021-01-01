@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-31 12:55:00
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 17:52:53
+ * @LastEditTime: 2021-01-01 01:30:13
  * @Description: 登录用框
 -->
 <template lang="pug">
@@ -32,7 +32,7 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup(props: any) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     // const { ctx } = getCurrentInstance();

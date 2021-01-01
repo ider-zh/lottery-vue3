@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-28 14:13:34
  * @LastEditors: ider
- * @LastEditTime: 2020-12-29 20:10:44
+ * @LastEditTime: 2021-01-01 01:34:13
  * @Description:
 -->
 <template>
@@ -16,7 +16,15 @@
 </template>
 
 <script lang="ts">
-
+export default {
+  name: '404',
+  components: {
+    // DoubleBall,
+  },
+  setup() {
+    // todo
+  },
+};
 </script>
 
 <style lang="scss" scope>
