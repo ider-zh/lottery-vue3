@@ -3,13 +3,13 @@
  * @Author: ider
  * @Date: 2020-12-31 12:55:00
  * @LastEditors: ider
- * @LastEditTime: 2021-01-01 01:30:13
+ * @LastEditTime: 2021-01-06 10:19:44
  * @Description: 登录用框
 -->
 <template lang="pug">
 el-form(ref="loginForm",:model="loginUser",:rules="rules",label-width="100px",class="loginForm sign-in-form")
-    el-form-item(label="用户名",prop="name")
-        el-input(v-model="loginUser.name",placeholder="Enter Name...")
+    el-form-item(label="用户名",prop="username")
+        el-input(v-model="loginUser.username",placeholder="Enter Name...")
     el-form-item(label="密码",prop="password")
         el-input(v-model="loginUser.password",type="password",placeholder="Enter Password...")
     el-form-item
@@ -20,6 +20,8 @@ el-form(ref="loginForm",:model="loginUser",:rules="rules",label-width="100px",cl
 </template>
 <script lang="ts">
 import { ref, Ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
   props: {
@@ -33,10 +35,12 @@ export default {
     },
   },
   setup(props: any) {
+    const store = useStore();
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     // const { ctx } = getCurrentInstance();
     const loginForm: Ref< {validate: function}> = ref(null);
+    const router = useRouter();
     // 触发登录方法
     const handleLogin = () => {
       // eslint-disable-next-line consistent-return
@@ -44,6 +48,9 @@ export default {
         if (valid) {
           // todo login
           console.log(props.loginUser);
+          store.dispatch('user/login', props.loginUser).then(() => {
+            router.push('/');
+          });
         } else {
           console.log('error submit!!');
           return false;

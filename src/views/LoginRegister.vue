@@ -3,20 +3,27 @@
  * @Author: ider
  * @Date: 2020-12-28 13:36:42
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 13:36:15
+ * @LastEditTime: 2021-01-06 01:15:30
  * @Description:
 -->
 <template lang="pug">
 el-row
+  .signin-signup(v-if="loginStatus===true")
     h1 登录
     LoginForm(:loginUser="loginUser",:rules="rules")
-    RegisterForm(:registerUser="registerUser",:registerRules="registerRules")
+  .signin-signup(v-else)
     h1 注册
+    RegisterForm(:registerUser="registerUser",:registerRules="registerRules")
+el-row
+  el-button(type="primary",v-if="loginStatus===true",@click="loginStatus=!loginStatus") 注册
+  el-button(type="primary",v-else,@click="loginStatus=!loginStatus") 登录
 
 </template>
 
 <script lang="ts">
 
+import { computed, reactive, toRefs } from 'vue';
+import { useStore } from 'vuex';
 import LoginForm from '@/components/LoginForm.vue';
 import RegisterForm from '@/components/RegisterForm.vue';
 import { loginUser, rules } from '@/util/loginValidators';
@@ -29,11 +36,18 @@ export default {
     RegisterForm,
   },
   setup() {
+    const data = reactive({
+      loginStatus: true,
+    });
+    const store = useStore();
+    const token = computed(() => store.getters['user/token']);
     return {
+      ...toRefs(data),
       loginUser,
       rules,
       registerUser,
       registerRules,
+      token,
     };
   },
 };
@@ -58,13 +72,5 @@ export default {
 }
 
 .signin-signup {
-    position: absolute;
-    top: 50%;
-    left: 75%;
-    width:44%;
-    transform: 1s 0.7s ease-in-out;
-    display: grid;
-    grid-template-columns: 1fr;
-    z-index:5;
 }
 </style>

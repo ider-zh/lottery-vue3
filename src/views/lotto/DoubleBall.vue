@@ -3,205 +3,88 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 11:13:40
+ * @LastEditTime: 2021-01-10 00:59:58
  * @Description:双色球，选号机器
 -->
-<template>
-  <div class="container">
-    <div class="h1">
-      <span>双色球选号工具</span>
-    </div>
-    <div class="red-ball title">
-      <span>红球区--- 至少选6个</span>
-    </div>
-    <LottoBall
-      v-model="redballs"
-      :count="11"
-      bool-type="red"
-    />
-    <div class="blue-ball title">
-      <span>蓝球区--- 至少选1个</span>
-    </div>
-    <LottoBall
-      v-model="blueballs"
-      :count="3"
-      bool-type="blue"
-    />
-    <el-divider />
-    <!-- 按钮区， 测试， 单期， 长期 -->
-    <div>
-      <span>您当前选了 <em style="color:red;">{{ redballs.length }}</em> 个红球 <em style="color:blue;">{{ blueballs.length }}</em> 个蓝球</span>
-      <el-button
-        type="text"
-        style="margin-left:1em;"
-        @click="redballs=[];blueballs=[]"
-      >
-        清空上方选号
-      </el-button>
-    </div>
-    <div>
-      <el-button
-        type="primary"
-        :disabled="buttonLevel1Status"
-        @click="getWinner"
-      >
-        查 询
-      </el-button>
-      <el-button
-        type="primary"
-        :disabled="buttonLevel1Status"
-        @click="selectTick"
-      >
-        选好了
-      </el-button>
-    </div>
-    <el-collapse-transition>
-      <div
-        v-show="tickSelects.length>0"
-        class="title"
-      >
-        <span> 清单 </span>
-      </div>
-    </el-collapse-transition>
-    <el-collapse-transition>
-      <el-table
-        v-show="tickSelects.length>0"
-        :data="tickSelects"
-        stripe
-        style="width: 100%"
-      >
-        <el-table-column
-          label="红球"
-          min-width="160px"
-        >
-          <template #default="scope">
-            <el-tag
-              v-for="(ball,index) of scope.row.redball"
-              :key="index"
-              effect="dark"
-              type="danger"
-            >
-              {{ FormatNumber(ball) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="蓝球"
-        >
-          <template #default="scope">
-            <el-tag
-              v-for="(ball,index) of scope.row.blueball"
-              :key="index"
-              effect="dark"
-            >
-              {{ FormatNumber(ball) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="注数"
-          prop="count"
-        />
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="50px"
-        >
-          <template #default="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="tickSelects.splice(scope.$index, 1)"
-            >
-              移除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-collapse-transition>
-    <el-collapse-transition>
-      <div
-        v-show="tickSelects.length>0"
-      >
-        <el-button
-          type="primary"
-          @click="dialogQiHaoVisible = !dialogQiHaoVisible"
-        >
-          下 注
-        </el-button>
-      </div>
-    </el-collapse-transition>
-    <div class="title">
-      <span> 中奖详情 </span>
-    </div>
-    <el-collapse
-      accordion
-    >
-      <el-collapse-item
-        v-for="({title,data},index) of winnerStatus"
-        :key="index"
-        :title="title"
-      >
-        <div
-          v-for="(item,i) of data"
-          :key="i"
-          class="text"
-        >
-          {{ item }}
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+<template  lang="pug">
+.container
+  .h1
+    span 双色球选号工具
+  .red-ball.title
+    span 红球区--- 至少选6个
+  LottoBall(v-model="redballs",:count="33",bool-type="red")
+  .blue-ball.title
+    span 蓝球区--- 至少选1个
+  LottoBall(v-model="blueballs",:count="16",bool-type="blue")
+  el-divider
+    //- <!-- 按钮区， 测试， 单期， 长期 -->
+  el-row(justify="center",type="flex")
+    span 您当前选了
+      em(style="color:red;") {{ redballs.length }}
+      span 个红球
+      em(style="color:blue;") {{ blueballs.length }}
+      span 个蓝球, 共
+      em(style="color:green;") {{ Combine(redballs.length, 6) * blueballs.length }}
+      span 注
 
-    <!-- 期号选择 对话框 -->
-    <el-dialog
-      v-model="dialogQiHaoVisible"
-      title="确认项目"
-    >
-      <el-form>
-        <el-form-item label="期号选择:">
-          <el-select
-            v-model="qihaoSelect"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in qihaoOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="备注信息:"
-        >
-          <el-input
-            v-model="comment"
-            type="textarea"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogQiHaoVisible = false">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="postTicks(true)"
-          >确 定</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+      el-button(type="text",style="margin-left:1em;",@click="redballs=[];blueballs=[]") 清空上方选号
+  el-row(justify="center",type="flex")
+    el-button(type="primary",:disabled="buttonLevel1Status",@click="getWinner") 查 询
+    el-button(type="primary",:disabled="buttonLevel1Status",@click="selectTick",v-if="token!=undefined&&token.length>0") 选好了
+  el-collapse-transition
+    .title(v-show="tickSelects.length>0")
+      span 清 单
+  el-collapse-transition
+    el-table(v-show="tickSelects.length>0",:data="tickSelects",stripe,style="width: 100%")
+      el-table-column(label="红球",min-width="160px")
+        template(#default="scope")
+          el-tag(v-for="(ball,index) of scope.row.redBall",:key="index",effect="dark",type="danger") {{ FormatNumber(ball) }}
+      el-table-column(label="蓝球")
+        template(#default="scope")
+          el-tag(v-for="(ball,index) of scope.row.blueBall",:key="index",effect="dark") {{ FormatNumber(ball) }}
+      el-table-column(label="注数",prop="count")
+      el-table-column(label="操作",fixed="right",width="50px")
+        template(#default="scope")
+          el-button(type="text",size="small",@click="tickSelects.splice(scope.$index, 1)") 移 除
+  el-collapse-transition
+    el-row(v-show="tickSelects.length>0",justify="center",type="flex")
+      el-button(type="primary",@click="dialogQiHaoVisible = !dialogQiHaoVisible") 下 注
+
+  .title
+    span 中奖详情
+
+  el-collapse(accordion)
+    el-collapse-item(v-for="({title,data},index) of winnerStatus",:key="index",:title="title + ' ( '+ data.length +' ) '")
+      .text(v-for="(item,i) of data",:key="i") {{ item }}
+
+    //- <!-- 期号选择 对话框 -->
+  el-dialog(v-model="dialogQiHaoVisible",title="确认项目")
+    el-form
+      el-form-item(label="期号选择:")
+        el-select(v-model="qihaoSelect",placeholder="请选择")
+          el-option(v-for="item in qihaoOption",:key="item.value",:label="item.label",:value="item.value")
+
+      el-form-item(label="备注信息:")
+        el-input(v-model="comment",type="textarea")
+
+    template(#footer)
+      span.dialog-footer
+        el-button(@click="dialogQiHaoVisible = false")  取 消
+        el-button(type="primary",@click="ssqBet")  确 定
 </template>
 
 <script lang="ts">
+import { useStore } from 'vuex';
 import {
-  reactive, toRefs, watch, onMounted,
+  reactive, toRefs, watch, onMounted, computed,
 } from 'vue';
 import LottoBall from '@/components/LottoBall.vue';
 import { Combine, FormatNumber } from '@/util/calcuate';
 import { ElMessage } from 'element-plus';
 import dayjs from 'dayjs';
 import dayOfYear from 'dayjs/plugin/dayOfYear';
+
+import { checkAward, getLatest, userBet } from '@/api/ssq';
 
 dayjs.extend(dayOfYear);
 
@@ -211,8 +94,8 @@ export interface WinnerData {
 }
 
 export interface TickSelect {
-    redball: number[];
-    blueball: number[];
+    redBall: number[];
+    blueBall: number[];
     count: number;
 }
 
@@ -224,12 +107,14 @@ export interface SelectOpt {
 export default {
   name: 'DoubleBall',
   components: {
-    // HelloWorld,
     LottoBall,
   },
   setup() {
+    const store = useStore();
+
+    const token = computed(() => store.getters['user/token']);
     const winerTypeDefault: WinnerData[] = [{
-      title: '一等奖',
+      title: '今晚吃鸡',
       data: [],
     }];
     const tickSelectsDefault: TickSelect[] = [];
@@ -248,7 +133,7 @@ export default {
 
     const checkButton = () => {
       // 只负责清空，没有完全相关联
-      if (data.redballs.length >= 1 && data.blueballs.length >= 1) {
+      if (data.redballs.length >= 6 && data.blueballs.length >= 1) {
         console.log(false);
         data.buttonLevel1Status = false;
       } else {
@@ -262,47 +147,36 @@ export default {
     // 中奖情况查询
     function getWinner() {
       // TODO
-      data.winnerStatus = [{
-        title: '一等奖',
-        data: ['时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02'],
-      }, {
-        title: '二等奖',
-        data: ['时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02'],
-      }, {
-        title: '三等奖',
-        data: ['时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02', '时间 2012-02-02, 期号 20111111, 红球: 01 02 03 04 05 06, 蓝球 02'],
-      }];
+      checkAward({
+        redball: data.redballs,
+        blueball: data.blueballs,
+      }).then((response) => {
+        if (response.data.data.length > 0) { data.winnerStatus = response.data.data; }
+      });
     }
 
     // 加入选择池
     function selectTick() {
       const tick: TickSelect = {
-        redball: data.redballs.sort(), blueball: data.blueballs.sort(), count: Combine(data.redballs.length, 6) * data.blueballs.length,
+        redBall: data.redballs.sort(),
+        blueBall: data.blueballs.sort(),
+        count: Combine(data.redballs.length, 6) * data.blueballs.length,
       };
       data.redballs = [];
       data.blueballs = [];
       data.tickSelects.push(tick);
     }
 
-    // 提交数据
-    function postTicks(Danqi = false) {
-      // todo  提交数据
-      if (Danqi === false) {
-        // todo
-      } else {
-        data.dialogQiHaoVisible = false;
-        // todo
-      }
-      ElMessage.success({
-        message: '恭喜你，这是一条成功消息',
-        type: 'success',
-      });
-    }
-
     // 更新 ssq 期号数据
     async function updateQiHaoOption() {
       // todo get last qihao
-      const qihao = '20134';
+
+      const response = await getLatest();
+
+      console.log(response.data);
+      // let { qihao } = response.data;
+      // todo test
+      const qihao = '21001';
       data.qihaoSelect = qihao;
       data.qihaoOption.push({
         value: qihao,
@@ -319,14 +193,47 @@ export default {
       });
       // 长期
       data.qihaoOption.unshift({
-        value: 'long',
+        value: 'forever',
         label: '长期跟踪',
+      }, {
+        value: 'forever-3',
+        label: '跟踪3期',
+      }, {
+        value: 'forever-12',
+        label: '跟踪12期',
+      }, {
+        value: 'forever-244',
+        label: '跟踪244期',
       });
       //   判断是否加入新一年的期号
       if (dayjs().dayOfYear() > 363) {
         data.qihaoOption.unshift({
           value: `${String(dayjs().year() % 100)}001`,
           label: `${String(dayjs().year())}001`,
+        });
+      }
+    }
+
+    // 投注
+    async function ssqBet() {
+      try {
+        const response = await userBet({
+          qihao: data.qihaoSelect,
+          comment: data.comment,
+          bets: data.tickSelects,
+        });
+        console.log(response.data);
+        data.dialogQiHaoVisible = false;
+        data.tickSelects.splice(0, data.tickSelects.length);
+        ElMessage.success({
+          message: '恭喜你，成功下注',
+          type: 'success',
+        });
+      } catch (error) {
+        data.dialogQiHaoVisible = false;
+        ElMessage.error({
+          message: '下注失败',
+          type: 'error',
         });
       }
     }
@@ -340,7 +247,7 @@ export default {
       console.log(data.blueballs);
     }
     return {
-      ...toRefs(data), clickFun, getWinner, selectTick, FormatNumber, postTicks,
+      ...toRefs(data), clickFun, getWinner, selectTick, FormatNumber, token, Combine, ssqBet,
     };
   },
 };
@@ -375,5 +282,9 @@ export default {
   font-size:large;
   font-weight: 400;
   color: #1f2f3d;
+}
+
+span em {
+  margin: 0 0.3em
 }
 </style>

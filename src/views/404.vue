@@ -3,16 +3,12 @@
  * @Author: ider
  * @Date: 2020-12-28 14:13:34
  * @LastEditors: ider
- * @LastEditTime: 2021-01-01 01:34:13
+ * @LastEditTime: 2021-01-06 00:18:32
  * @Description:
 -->
-<template>
-  <div class="not-found">
-    <img
-      src="../assets/404.gif"
-      alt="404"
-    >
-  </div>
+<template  lang="pug">
+.not-found
+  img(src="../assets/404.gif",alt="404")
 </template>
 
 <script lang="ts">

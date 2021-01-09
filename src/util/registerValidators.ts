@@ -1,21 +1,15 @@
 import { ref } from 'vue';
-
-interface RegisterUser {
-  name: string;
-  email: string;
-  password: string;
-  password2: string;
-}
+import { RegisterUser } from '@/types/user';
 
 export const registerUser = ref<RegisterUser>({
-  name: '',
+  username: '',
   email: '',
   password: '',
   password2: '',
 });
 
 interface RegisterRules {
-  name: ({
+  username: ({
     message: string;
     required: boolean;
     trigger: string;
@@ -69,7 +63,7 @@ const validatePass2 = (rule: RegisterRules, value: string, callback: any) => {
 };
 
 export const registerRules = ref<RegisterRules>({
-  name: [
+  username: [
     {
       message: '用户名不能为空...',
       required: true,

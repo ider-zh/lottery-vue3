@@ -3,18 +3,18 @@
  * @Author: ider
  * @Date: 2020-12-31 20:13:54
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 20:15:19
+ * @LastEditTime: 2021-01-04 01:54:53
  * @Description:
  */
 import Cookies from 'js-cookie';
 
 const TokenKey = 'Admin-Token';
 
-export function getToken() {
+export function getToken(): string | undefined {
   return Cookies.get(TokenKey);
 }
 
-export function setToken(token: string) {
+export function setToken(token: string): string | undefined {
   return Cookies.set(TokenKey, token);
 }
 

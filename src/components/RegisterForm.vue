@@ -3,13 +3,13 @@
  * @Author: ider
  * @Date: 2020-12-31 13:27:02
  * @LastEditors: ider
- * @LastEditTime: 2021-01-01 01:35:00
+ * @LastEditTime: 2021-01-05 21:04:12
  * @Description: 注册用户
 -->
 <template lang="pug">
 el-form(ref="registerForm",:model="registerUser",:rules="registerRules",label-width="100px",class="registerForm sign-up-form")
-    el-form-item(label="用户名",prop="name")
-        el-input(v-model="registerUser.name",placeholder="Enter UserName...")
+    el-form-item(label="用户名",prop="username")
+        el-input(v-model="registerUser.username",placeholder="Enter UserName...")
     el-form-item(label="邮箱",prop="email")
         el-input(v-model="registerUser.email",placeholder="Enter Email...")
     el-form-item(label="密码",prop="password")
@@ -23,7 +23,8 @@ el-form(ref="registerForm",:model="registerUser",:rules="registerRules",label-wi
 
 <script lang="ts">
 import { getCurrentInstance } from 'vue';
-// import axios from 'axios' // 仅限在当前组件使用
+import { register } from '@/api/user';
+// 仅限在当前组件使用
 export default {
   props: {
     registerUser: {
@@ -35,7 +36,7 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props: any) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     const { ctx } = getCurrentInstance();
@@ -45,6 +46,8 @@ export default {
       ctx.$refs[formName].validate((valid: boolean) => {
         if (valid) {
           console.log('success');
+
+          register(props.registerUser);
         } else {
           console.log('error submit!!');
           return false;

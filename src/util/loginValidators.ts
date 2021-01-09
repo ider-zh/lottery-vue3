@@ -1,17 +1,13 @@
 import { ref } from 'vue';
+import { UserInfo } from '@/types/user';
 
-interface User {
-  name: string;
-  password: string;
-}
-
-export const loginUser = ref<User>({
-  name: '',
+export const loginUser = ref<UserInfo>({
+  username: '',
   password: '',
 });
 
 interface Rules {
-  name: {
+  username: {
     type: string;
     message: string;
     required: boolean;
@@ -34,7 +30,7 @@ interface Rules {
 
 // 校验规则
 export const rules = ref<Rules>({
-  name: [
+  username: [
     {
       type: 'string',
       message: 'Name is incorrect...',
