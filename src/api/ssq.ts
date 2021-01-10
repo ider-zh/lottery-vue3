@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2021-01-07 21:29:17
  * @LastEditors: ider
- * @LastEditTime: 2021-01-07 22:50:18
+ * @LastEditTime: 2021-01-10 22:27:32
  * @Description:
  */
 import request from '@/util/http';
@@ -28,6 +28,38 @@ export function userBet(data: Record<string, any>) {
     url: '/lottery/ssq/bet',
     method: 'post',
     data,
+  });
+}
+
+export function getUserForeverBets(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/ssq/foreverbets',
+    method: 'get',
+    params,
+  });
+}
+
+export function deleteUserForeverBets(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/ssq/foreverbets',
+    method: 'delete',
+    params,
+  });
+}
+
+export function getUserBets(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/ssq/bets',
+    method: 'get',
+    params,
+  });
+}
+
+export function deleteUserBets(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/ssq/bets',
+    method: 'delete',
+    params,
   });
 }
 

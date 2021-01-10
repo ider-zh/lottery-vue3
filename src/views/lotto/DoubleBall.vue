@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-01-10 00:59:58
+ * @LastEditTime: 2021-01-11 00:48:00
  * @Description:双色球，选号机器
 -->
 <template  lang="pug">
@@ -38,10 +38,10 @@
     el-table(v-show="tickSelects.length>0",:data="tickSelects",stripe,style="width: 100%")
       el-table-column(label="红球",min-width="160px")
         template(#default="scope")
-          el-tag(v-for="(ball,index) of scope.row.redBall",:key="index",effect="dark",type="danger") {{ FormatNumber(ball) }}
+          li.ball.red(v-for="(ball,index) of scope.row.redBall",:key="index") {{ FormatNumber(ball) }}
       el-table-column(label="蓝球")
         template(#default="scope")
-          el-tag(v-for="(ball,index) of scope.row.blueBall",:key="index",effect="dark") {{ FormatNumber(ball) }}
+          li.ball.blue(v-for="(ball,index) of scope.row.blueBall",:key="index") {{ FormatNumber(ball) }}
       el-table-column(label="注数",prop="count")
       el-table-column(label="操作",fixed="right",width="50px")
         template(#default="scope")
@@ -53,10 +53,7 @@
   .title
     span 中奖详情
 
-  el-collapse(accordion)
-    el-collapse-item(v-for="({title,data},index) of winnerStatus",:key="index",:title="title + ' ( '+ data.length +' ) '")
-      .text(v-for="(item,i) of data",:key="i") {{ item }}
-
+  LotterySsqAward(:redball="checkredball",:blueball="checkblueball")
     //- <!-- 期号选择 对话框 -->
   el-dialog(v-model="dialogQiHaoVisible",title="确认项目")
     el-form
@@ -79,19 +76,16 @@ import {
   reactive, toRefs, watch, onMounted, computed,
 } from 'vue';
 import LottoBall from '@/components/LottoBall.vue';
+import LotterySsqAward from '@/components/LotterySsqAward.vue';
+
 import { Combine, FormatNumber } from '@/util/calcuate';
 import { ElMessage } from 'element-plus';
 import dayjs from 'dayjs';
 import dayOfYear from 'dayjs/plugin/dayOfYear';
 
-import { checkAward, getLatest, userBet } from '@/api/ssq';
+import { getLatest, userBet } from '@/api/ssq';
 
 dayjs.extend(dayOfYear);
-
-export interface WinnerData {
-    title: string;
-    data: string[];
-}
 
 export interface TickSelect {
     redBall: number[];
@@ -108,22 +102,21 @@ export default {
   name: 'DoubleBall',
   components: {
     LottoBall,
+    LotterySsqAward,
   },
   setup() {
     const store = useStore();
 
     const token = computed(() => store.getters['user/token']);
-    const winerTypeDefault: WinnerData[] = [{
-      title: '今晚吃鸡',
-      data: [],
-    }];
+
     const tickSelectsDefault: TickSelect[] = [];
     const qihaoSelectsDefault: SelectOpt[] = [];
     const data = reactive({
       buttonLevel1Status: true,
       redballs: [],
       blueballs: [],
-      winnerStatus: winerTypeDefault,
+      checkredball: [],
+      checkblueball: [],
       dialogQiHaoVisible: false,
       tickSelects: tickSelectsDefault,
       qihaoSelect: '',
@@ -146,13 +139,8 @@ export default {
 
     // 中奖情况查询
     function getWinner() {
-      // TODO
-      checkAward({
-        redball: data.redballs,
-        blueball: data.blueballs,
-      }).then((response) => {
-        if (response.data.data.length > 0) { data.winnerStatus = response.data.data; }
-      });
+      data.checkredball = data.redballs;
+      data.checkblueball = data.blueballs;
     }
 
     // 加入选择池
@@ -174,9 +162,8 @@ export default {
       const response = await getLatest();
 
       console.log(response.data);
-      // let { qihao } = response.data;
+      const { qihao } = response.data;
       // todo test
-      const qihao = '21001';
       data.qihaoSelect = qihao;
       data.qihaoOption.push({
         value: qihao,
@@ -266,16 +253,12 @@ export default {
 }
 .red-ball {
     background: linear-gradient(to right, #e23a3a,#fff);
-
     color: #fff;
 }
 
 .blue-ball {
     background: linear-gradient(to right, #4493eb,#fff);
     color: #fff;
-}
-.el-tag {
-        border-radius: 50%;
 }
 
 .h1 {
@@ -286,5 +269,27 @@ export default {
 
 span em {
   margin: 0 0.3em
+}
+
+li.ball {
+  width: 2.1em;
+  height: 2.1em;
+  line-height: 2.1em;
+  margin: 0 2px;
+  text-align: center;
+  border-radius: 50%;
+  display: inline-block;
+}
+.red{
+  color:#fe4245;
+  border-width:2px;
+  border-style:solid;
+  border-color: #fe4245;
+}
+.blue {
+    color:#5b85fe;
+  border-width:2px;
+  border-style:solid;
+  border-color: #5b85fe;
 }
 </style>
