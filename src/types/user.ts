@@ -9,3 +9,12 @@ export interface RegisterUser {
   password: string;
   password2: string;
 }
+
+// 登录后的用户信息
+export interface UserStoreInfo {
+  nickname: string;
+  email: string;
+  dingWebHook: string;
+  avatar: string;
+  introduction: string;
+}

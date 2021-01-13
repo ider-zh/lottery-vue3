@@ -3,43 +3,25 @@
  * @Author: ider
  * @Date: 2020-12-27 23:02:15
  * @LastEditors: ider
- * @LastEditTime: 2020-12-31 11:14:23
+ * @LastEditTime: 2021-01-13 10:45:59
  * @Description: 乐透型彩票,红球还是蓝球
 -->
 
-<template>
-  <div class="ball-list">
-    <ul>
-      <li
-        v-for="({num,active},index) of balls"
-        :key="num"
-        :label="num"
-        @click="clickNumber(index);"
-      >
-        <el-button
-          v-if="boolType==='blue'"
-          plain
-          circle
-          :class="{
-            'blue-ball':!active,
-            'blue-ball-active':active,
-          }"
-        >
-          {{ FormatNumber(num) }}
-        </el-button>
-        <el-button
-          v-else
-          circle
-          :class="{
-            'red-ball':!active,
-            'red-ball-active':active,
-          }"
-        >
-          {{ FormatNumber(num) }}
-        </el-button>
-      </li>
-    </ul>
-  </div>
+<template lang="pug">
+.ball-list
+  ul
+    li(v-for='({num,active},index) of balls' :key='num' :label='num' @click='clickNumber(index);')
+      el-button(v-if="boolType==='blue'" plain='' circle='' :class="{\
+      'blue-ball':!active,\
+      'blue-ball-active':active,\
+      }")
+        | {{ FormatNumber(num) }}
+      el-button(v-else='' circle='' :class="{\
+      'red-ball':!active,\
+      'red-ball-active':active,\
+      }")
+        | {{ FormatNumber(num) }}
+
 </template>
 
 <script lang="ts">

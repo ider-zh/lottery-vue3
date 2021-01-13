@@ -10,6 +10,7 @@ el-container(id="app")
         el-menu-item(index="/login",class="login",v-if="token===undefined||token.length===0") login
         el-submenu(index="/login",class="login",v-else)
           template(#title) login
+          el-menu-item(index="/modify_user") 修改用户资料
           el-menu-item(@click="logout") 登出
 
         el-menu-item(disabled,index="/404",class="login")
@@ -20,8 +21,9 @@ el-container(id="app")
 </template>
 
 <script>
-import { reactive, toRefs, computed } from 'vue';
+import { reactive, toRefs } from 'vue';
 import { useStore } from 'vuex';
+import { token } from '@/util/userStore';
 // import DoubleBall from './views/lotto/DoubleBall.vue'; // @ is an alias to /src
 // import HelloWorld from './components/HelloWorld.vue';
 
@@ -39,7 +41,6 @@ export default {
     function logout() {
       store.dispatch('user/logout');
     }
-    const token = computed(() => store.getters['user/token']);
     return { ...toRefs(data), logout, token };
   },
 };

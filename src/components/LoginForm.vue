@@ -3,17 +3,17 @@
  * @Author: ider
  * @Date: 2020-12-31 12:55:00
  * @LastEditors: ider
- * @LastEditTime: 2021-01-06 10:19:44
+ * @LastEditTime: 2021-01-13 15:54:15
  * @Description: 登录用框
 -->
 <template lang="pug">
-el-form(ref="loginForm",:model="loginUser",:rules="rules",label-width="100px",class="loginForm sign-in-form")
+el-form.loginForm(ref="loginForm",:model="loginUser",:rules="rules",label-width="100px")
     el-form-item(label="用户名",prop="username")
         el-input(v-model="loginUser.username",placeholder="Enter Name...")
     el-form-item(label="密码",prop="password")
         el-input(v-model="loginUser.password",type="password",placeholder="Enter Password...")
     el-form-item
-        el-button(@click="handleLogin('loginForm')",type="primary",class="submit-btn") 提交
+        el-button.submit-btn(@click="handleLogin('loginForm')",type="primary") 提交
     .tiparea
         p 忘记密码？
             a 立即找回
@@ -66,6 +66,7 @@ export default {
 <style lang="scss" scoped>
 /* form */
 .loginForm {
+  width:30em;
   margin-top: 20px;
   background-color: #fff;
   padding: 20px 40px 20px 20px;

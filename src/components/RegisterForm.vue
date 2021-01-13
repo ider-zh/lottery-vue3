@@ -3,11 +3,11 @@
  * @Author: ider
  * @Date: 2020-12-31 13:27:02
  * @LastEditors: ider
- * @LastEditTime: 2021-01-05 21:04:12
+ * @LastEditTime: 2021-01-13 15:48:01
  * @Description: 注册用户
 -->
 <template lang="pug">
-el-form(ref="registerForm",:model="registerUser",:rules="registerRules",label-width="100px",class="registerForm sign-up-form")
+el-form.registerForm(ref="registerForm",:model="registerUser",:rules="registerRules",label-width="100px")
     el-form-item(label="用户名",prop="username")
         el-input(v-model="registerUser.username",placeholder="Enter UserName...")
     el-form-item(label="邮箱",prop="email")
@@ -17,7 +17,7 @@ el-form(ref="registerForm",:model="registerUser",:rules="registerRules",label-wi
     el-form-item(label="确认密码",prop="password2")
         el-input(v-model="registerUser.password2",type="password",placeholder="Enter Password...")
     el-form-item
-        el-button(@click="handleRegister('registerForm')",type="primary",class="submit-btn") 注册
+        el-button.submit-btn(@click="handleRegister('registerForm')",type="primary") 注册
 
 </template>
 
@@ -62,6 +62,7 @@ export default {
 
 <style lang="scss" scoped>
 .registerForm {
+  width:30em;
   margin-top: 20px;
   background-color: #fff;
   padding: 20px 40px 20px 20px;
