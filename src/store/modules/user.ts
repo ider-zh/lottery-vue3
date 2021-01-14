@@ -4,7 +4,7 @@
  * @Author: ider
  * @Date: 2020-12-31 19:53:08
  * @LastEditors: ider
- * @LastEditTime: 2021-01-13 19:24:20
+ * @LastEditTime: 2021-01-14 10:27:04
  * @Description:
  */
 
@@ -46,7 +46,7 @@ const mutations = {
     state.name = name;
   },
   SET_NICKNAME(state: UserState, name: string) {
-    state.name = name;
+    state.nickname = name;
   },
   SET_EMAIL(state: UserState, email: string) {
     state.email = email;

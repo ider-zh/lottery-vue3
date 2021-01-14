@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2021-01-13 15:36:42
  * @LastEditors: ider
- * @LastEditTime: 2021-01-13 19:05:50
+ * @LastEditTime: 2021-01-14 10:40:25
  * @Description:
 -->
 <!--
@@ -42,6 +42,7 @@ export default {
     });
     onMounted(() => {
       console.log(infoStoreUser);
+      console.log('nickname', nickname);
     });
     return {
       ...toRefs(data), email, nickname, avatar, introduction, dingWebHook, infoRules, infoStoreUser,
