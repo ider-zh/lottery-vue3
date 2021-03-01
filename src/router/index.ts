@@ -26,6 +26,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/lotto/DoubleBall.vue'),
   },
   {
+    path: '/lotto',
+    name: 'lotto',
+    component: () => import('@/views/lotto/Lotto.vue'),
+  },
+  {
+    path: '/lottoaward',
+    name: 'lottoaward',
+    component: () => import('@/views/lotto/LottoAward.vue'),
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/LoginRegister.vue'),

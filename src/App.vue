@@ -4,9 +4,11 @@ el-container(id="app")
   el-container
     el-header
       el-menu(class="el-menu-demo",router,mode="horizontal")
-        el-menu-item(index="/") Home
+        el-menu-item(index="/")
         el-menu-item(index="/doubleballaward",v-if="token!=undefined&&token.length>0") 双色球清单
+        el-menu-item(index="/lottoaward",v-if="token!=undefined&&token.length>0") 大乐透清单
         el-menu-item(index="/doubleball") 双色球选号
+        el-menu-item(index="/lotto") 大乐透选号
         el-menu-item(index="/login",class="login",v-if="token===undefined||token.length===0") login
         el-submenu(index="/login",class="login",v-else)
           template(#title) login
