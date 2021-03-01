@@ -41,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/LoginRegister.vue'),
   },
   {
+    path: '/modify_user',
+    name: 'modify_user',
+    component: () => import('@/views/ModifyUser.vue'),
+  },
+  {
     path: '/:catchAll(.*)',
     name: '/404',
     component: () => import('@/views/404.vue'),

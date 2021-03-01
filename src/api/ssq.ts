@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2021-01-07 21:29:17
  * @LastEditors: ider
- * @LastEditTime: 2021-01-10 22:27:32
+ * @LastEditTime: 2021-01-13 20:05:13
  * @Description:
  */
 import request from '@/util/http';
@@ -20,6 +20,14 @@ export function checkAward(data: Record<string, any>) {
     url: '/lottery/ssq/check',
     method: 'post',
     data,
+  });
+}
+
+export function freezeForever(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/ssq/foreverbets/freeze',
+    method: 'get',
+    params,
   });
 }
 

@@ -1,11 +1,11 @@
-import { UserInfo } from '@/types/user';
+import { UserInfo, UserStoreInfo } from '@/types/user';
 
 /*
  * @Version: 0.0.1
  * @Author: ider
  * @Date: 2021-01-05 19:53:35
  * @LastEditors: ider
- * @LastEditTime: 2021-01-06 00:39:40
+ * @LastEditTime: 2021-01-13 16:53:19
  * @Description:
  */
 
@@ -22,6 +22,14 @@ export function login(data: UserInfo) {
 export function register(data: UserInfo) {
   return request.request({
     url: '/user/register',
+    method: 'post',
+    data,
+  });
+}
+
+export function modifyInfo(data: UserStoreInfo) {
+  return request.request({
+    url: '/user/modify',
     method: 'post',
     data,
   });

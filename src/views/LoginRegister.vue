@@ -3,18 +3,18 @@
  * @Author: ider
  * @Date: 2020-12-28 13:36:42
  * @LastEditors: ider
- * @LastEditTime: 2021-01-06 01:15:30
+ * @LastEditTime: 2021-01-13 16:58:45
  * @Description:
 -->
 <template lang="pug">
-el-row
+el-row(justify="center",type="flex")
   .signin-signup(v-if="loginStatus===true")
     h1 登录
     LoginForm(:loginUser="loginUser",:rules="rules")
   .signin-signup(v-else)
     h1 注册
     RegisterForm(:registerUser="registerUser",:registerRules="registerRules")
-el-row
+el-row.action(justify="center",type="flex")
   el-button(type="primary",v-if="loginStatus===true",@click="loginStatus=!loginStatus") 注册
   el-button(type="primary",v-else,@click="loginStatus=!loginStatus") 登录
 
@@ -22,12 +22,12 @@ el-row
 
 <script lang="ts">
 
-import { computed, reactive, toRefs } from 'vue';
-import { useStore } from 'vuex';
+import { reactive, toRefs } from 'vue';
 import LoginForm from '@/components/LoginForm.vue';
 import RegisterForm from '@/components/RegisterForm.vue';
 import { loginUser, rules } from '@/util/loginValidators';
 import { registerUser, registerRules } from '@/util/registerValidators';
+import { token } from '@/util/userStore';
 
 export default {
   name: 'LoginRegister',
@@ -39,8 +39,6 @@ export default {
     const data = reactive({
       loginStatus: true,
     });
-    const store = useStore();
-    const token = computed(() => store.getters['user/token']);
     return {
       ...toRefs(data),
       loginUser,
@@ -71,6 +69,7 @@ export default {
     left:0;
 }
 
-.signin-signup {
+.action {
+  margin-top:2em;
 }
 </style>

@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-01-11 00:56:00
+ * @LastEditTime: 2021-01-13 20:25:11
  * @Description:双色球,开奖信息
 -->
 <template lang="pug">
@@ -14,7 +14,7 @@
     .title 长期跟踪
       el-divider(direction="vertical")
   el-row
-    el-table(:data="foreverTicksOption.data",border,style="width: 100%")
+    el-table(:data="foreverTicksOption.data",border,style="width: 100%",:row-class-name="tableRowClassName")
       el-table-column(min-width="160px",label="红球")
         template(#default="scope")
           li.ball.red(v-for="(ball,index) of scope.row.redball",:key="index") {{ FormatNumber(ball) }}
@@ -35,9 +35,10 @@
             template(#reference)
               .name-wrapper
                 el-tag(size="medium") {{ scope.row.createdAt }}
-      el-table-column(fixed="right",width="90px",label="操作",align="center")
+      el-table-column(fixed="right",width="120px",label="操作",align="center")
         template(#default="scope")
           el-row
+            el-button(type="text",size="small",@click="FreezeForeverBet(foreverTicksOption.data,scope.$index)") {{scope.row.disabled === false ?'冻结':'解冻'}}
             el-button(type="text",size="small",@click="ForeverBetsDelete(foreverTicksOption.data,scope.$index)") 移除
             el-button(type="text",size="small",@click="checkHistory(scope.row)") 历史
 
@@ -163,7 +164,7 @@ import { FormatNumber, RanderAwardSSQ, Combine } from '@/util/calcuate';
 import dayjs from 'dayjs';
 import dayOfYear from 'dayjs/plugin/dayOfYear';
 import {
-  getUserForeverBets, deleteUserForeverBets, getUserBets, deleteUserBets,
+  getUserForeverBets, deleteUserForeverBets, getUserBets, deleteUserBets, freezeForever,
 } from '@/api/ssq';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import LotterySsqAward from '@/components/LotterySsqAward.vue';
@@ -189,6 +190,7 @@ export interface ForeverTicksData {
     last: number;
     comment: string;
     createdAt: string;
+    disabled: boolean;
 }
 
 // 服务器返回的数据
@@ -285,12 +287,12 @@ export default {
         data.foreverTicksOption.total = res.data.total;
         // 清空length
         data.foreverTicksOption.data.splice(0, data.foreverTicksOption.data.length);
-        console.log(data.foreverTicksOption.data.length);
         data.foreverTicksOption.data.push(...res.data.data.map((item: any) => ({
           id: item.id,
           redball: item.redball.split(' '),
           blueball: item.blueball.split(' '),
           last: item.last,
+          disabled: item.disabled,
           comment: item.comment,
           createdAt: dayjs(item.createdAt).locale('zh-cn').format('YYYY-MM-DD'),
         })));
@@ -316,6 +318,26 @@ export default {
             message: `移除失败:${error}`,
             type: 'error',
           });
+        });
+      });
+    }
+
+    function FreezeForeverBet(datalist: Array<Record<string, any>>, index: number) {
+      const mode = datalist[index].disabled === false ? 0 : 1;
+      freezeForever({
+        id: datalist[index].id,
+        mode,
+      }).then(() => {
+        // eslint-disable-next-line no-param-reassign
+        datalist[index].disabled = !datalist[index].disabled;
+        ElMessage.success({
+          message: mode === 0 ? '冻结成功' : '解冻成功',
+          type: 'success',
+        });
+      }).catch((error) => {
+        ElMessage.error({
+          message: mode === 0 ? `冻结失败:${error}` : `解冻失败:${error}`,
+          type: 'error',
         });
       });
     }
@@ -381,8 +403,24 @@ export default {
       syncBets(2, 1, data.unAwardTicksOption);
     });
 
+    function tableRowClassName({ row }: Record<string, any>) {
+      if (row.disabled === true) {
+        return 'warning-row';
+      }
+      return '';
+    }
     return {
-      ...toRefs(data), FormatNumber, RanderAwardSSQ, syncForeverBets, ForeverBetsDelete, Combine, BetsDelete, syncBets, checkHistory,
+      ...toRefs(data),
+      FormatNumber,
+      RanderAwardSSQ,
+      syncForeverBets,
+      ForeverBetsDelete,
+      Combine,
+      BetsDelete,
+      syncBets,
+      checkHistory,
+      tableRowClassName,
+      FreezeForeverBet,
     };
   },
 };
@@ -429,5 +467,8 @@ li.ball {
   border-width:2px;
   border-style:solid;
   border-color: #5b85fe;
+}
+.warning-row {
+  background: oldlace;
 }
 </style>

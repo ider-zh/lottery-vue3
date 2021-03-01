@@ -4,7 +4,7 @@
  * @Author: ider
  * @Date: 2020-12-31 19:53:08
  * @LastEditors: ider
- * @LastEditTime: 2021-01-06 10:17:05
+ * @LastEditTime: 2021-01-14 10:27:04
  * @Description:
  */
 
@@ -12,25 +12,29 @@ import {
   getToken, setToken, removeToken,
 } from '@/util/auth';
 
-import { UserInfo } from '@/types/user';
-import { login, logout } from '@/api/user';
+import { UserInfo, UserStoreInfo } from '@/types/user';
+import { login, logout, modifyInfo } from '@/api/user';
 
 import { ElMessage } from 'element-plus';
 
 export interface UserState {
   token: string|undefined;
   name: string;
-  avatar: string;
-  introduction: string;
   email: string;
+  nickname: string|undefined;
+  avatar: string|undefined;
+  introduction: string|undefined;
+  dingWebHook: string|undefined;
 }
 
 const state: UserState = {
   token: getToken(),
   name: '',
+  nickname: '',
   email: '',
   avatar: '',
   introduction: '',
+  dingWebHook: '',
 };
 
 const mutations = {
@@ -41,6 +45,9 @@ const mutations = {
   SET_NAME(state: UserState, name: string) {
     state.name = name;
   },
+  SET_NICKNAME(state: UserState, name: string) {
+    state.nickname = name;
+  },
   SET_EMAIL(state: UserState, email: string) {
     state.email = email;
   },
@@ -50,14 +57,19 @@ const mutations = {
   SET_AVATAR(state: UserState, avatar: string) {
     state.avatar = avatar;
   },
+  SET_DINGWEBHOOK(state: UserState, dingWebHook: string) {
+    state.dingWebHook = dingWebHook;
+  },
 };
 
 const getters = {
   token: (state: UserState) => state.token,
   name: (state: UserState) => state.name,
+  nickname: (state: UserState) => state.nickname,
   avatar: (state: UserState) => state.avatar,
   introduction: (state: UserState) => state.introduction,
   email: (state: UserState) => state.email,
+  dingWebHook: (state: UserState) => state.dingWebHook,
 };
 
 const actions = {
@@ -68,12 +80,17 @@ const actions = {
       login({ username: username.trim(), password }).then((response) => {
         const { data } = response;
         ctx.commit('SET_TOKEN', data.accessToken);
+        ctx.commit('SET_NAME', data.username);
+        ctx.commit('SET_NICKNAME', data.nickname);
+        ctx.commit('SET_EMAIL', data.email);
+        ctx.commit('SET_INTRODUCTION', data.introduction);
+        ctx.commit('SET_AVATAR', data.avatar);
+        ctx.commit('SET_DINGWEBHOOK', data.dingWebHook);
         setToken(data.accessToken);
         const hour = new Date().getHours();
         // eslint-disable-next-line no-nested-ternary
         const thisTime = hour < 8 ? '早上好' : hour <= 11 ? '上午好' : hour <= 13 ? '中午好' : hour < 18 ? '下午好' : '晚上好';
-        ElMessage.success(`欢迎登录, ${thisTime}！`);
-
+        ElMessage.success(`欢迎登录 ${data.nickname ? data.nickname : data.username}, ${thisTime}！`);
         resolve();
       }).catch((error) => {
         reject(error);
@@ -81,34 +98,24 @@ const actions = {
     });
   },
 
-  // // get user info
-  // getInfo({ commit, state }) {
-  //   return new Promise((resolve: Function, reject: Function) => {
-  //     getInfo(state.token).then((response) => {
-  //       const { data } = response;
-
-  //       if (!data) {
-  //         reject('Verification failed, please Login again.');
-  //       }
-
-  //       const {
-  //         roles, name, avatar, introduction,
-  //       } = data;
-
-  //       // roles must be a non-empty array
-  //       if (!roles || roles.length <= 0) {
-  //         reject('getInfo: roles must be a non-null array!');
-  //       }
-
-  //       commit('SET_NAME', name);
-  //       commit('SET_AVATAR', avatar);
-  //       commit('SET_INTRODUCTION', introduction);
-  //       resolve(data);
-  //     }).catch((error) => {
-  //       reject(error);
-  //     });
-  //   });
-  // },
+  // get user info
+  modifyInfo(ctx: Record<string, any>, userStoreInfo: UserStoreInfo) {
+    return new Promise((resolve: Function, reject: Function) => {
+      modifyInfo(userStoreInfo).then((response) => {
+        const { data } = response;
+        ctx.commit('SET_NAME', data.username);
+        ctx.commit('SET_NICKNAME', data.nickname);
+        ctx.commit('SET_EMAIL', data.email);
+        ctx.commit('SET_INTRODUCTION', data.introduction);
+        ctx.commit('SET_AVATAR', data.avatar);
+        ctx.commit('SET_DINGWEBHOOK', data.dingWebHook);
+        resolve(data);
+      }).catch((error) => {
+        ElMessage.error(`失败, ${error}！`);
+        reject(error);
+      });
+    });
+  },
 
   // user logout
   logout(ctx: Record<string, any>) {
