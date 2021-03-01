@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 01:34:18
+ * @LastEditTime: 2021-03-02 01:52:34
  * @Description:大乐透,开奖信息
 -->
 <template lang="pug">
@@ -14,7 +14,7 @@
     .title 长期跟踪
       el-divider(direction="vertical")
   el-row
-    el-table(:data="foreverTicksOption.data",border,style="width: 100%")
+    el-table(:data="foreverTicksOption.data",border,style="width: 100%",:row-class-name="tableRowClassName")
       el-table-column(min-width="160px",label="前区")
         template(#default="scope")
           li.ball.red(v-for="(ball,index) of scope.row.front",:key="index") {{ FormatNumber(ball) }}
@@ -38,6 +38,7 @@
       el-table-column(fixed="right",width="90px",label="操作",align="center")
         template(#default="scope")
           el-row
+            el-button(type="text",size="small",@click="FreezeForeverBet(foreverTicksOption.data,scope.$index)") {{scope.row.disabled === false ?'冻结':'解冻'}}
             el-button(type="text",size="small",@click="ForeverBetsDelete(foreverTicksOption.data,scope.$index)") 移除
             el-button(type="text",size="small",@click="checkHistory(scope.row)") 历史
 
@@ -52,7 +53,7 @@
       el-divider(direction="vertical")
   el-row
     el-table(:data="unOpenTicksOption.data",border,style="width: 100%")
-      el-table-column(prop="qihao",label="期号")
+      el-table-column(prop="drawnum",label="期号")
       el-table-column(min-width="160px",label="前区")
         template(#default="scope")
           li.ball.red(v-for="(ball,index) of scope.row.front",:key="index") {{ FormatNumber(ball) }}
@@ -86,7 +87,7 @@
       el-divider(direction="vertical")
   el-row
     el-table(:data="awardTicksOption.data",border,style="width: 100%")
-      el-table-column(prop="qihao",label="期号")
+      el-table-column(prop="drawnum",label="期号")
       el-table-column(min-width="160px",label="前区")
         template(#default="scope")
           li.ball.red(v-for="(ball,index) of scope.row.front",:key="index") {{ FormatNumber(ball) }}
@@ -121,7 +122,7 @@
       el-divider(direction="vertical")
   el-row
     el-table(:data="unAwardTicksOption.data",border,style="width: 100%")
-      el-table-column(prop="qihao",label="期号")
+      el-table-column(prop="drawnum",label="期号")
       el-table-column(min-width="160px",label="前区")
         template(#default="scope")
           li.ball.red(v-for="(ball,index) of scope.row.front",:key="index") {{ FormatNumber(ball) }}
@@ -163,7 +164,7 @@ import { FormatNumber, RanderAwardSSQ, Combine } from '@/util/calcuate';
 import dayjs from 'dayjs';
 import dayOfYear from 'dayjs/plugin/dayOfYear';
 import {
-  getUserForeverBets, deleteUserForeverBets, getUserBets, deleteUserBets,
+  getUserForeverBets, deleteUserForeverBets, getUserBets, deleteUserBets, freezeForever,
 } from '@/api/lotto';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import LottoAward from '@/components/LottoAward.vue';
@@ -189,11 +190,12 @@ export interface ForeverTicksData {
     last: number;
     comment: string;
     createdAt: string;
+    disabled: boolean;
 }
 
 // 服务器返回的数据
 export interface TicksData {
-    qihao: string;
+    drawnum: string;
     createdAt: string;
     front: number[];
     back: number[];
@@ -291,6 +293,7 @@ export default {
           front: item.front.split(' '),
           back: item.back.split(' '),
           last: item.last,
+          disabled: item.disabled,
           comment: item.comment,
           createdAt: dayjs(item.createdAt).locale('zh-cn').format('YYYY-MM-DD'),
         })));
@@ -316,6 +319,26 @@ export default {
             message: `移除失败:${error}`,
             type: 'error',
           });
+        });
+      });
+    }
+
+    function FreezeForeverBet(datalist: Array<Record<string, any>>, index: number) {
+      const mode = datalist[index].disabled === false ? 0 : 1;
+      freezeForever({
+        id: datalist[index].id,
+        mode,
+      }).then(() => {
+        // eslint-disable-next-line no-param-reassign
+        datalist[index].disabled = !datalist[index].disabled;
+        ElMessage.success({
+          message: mode === 0 ? '冻结成功' : '解冻成功',
+          type: 'success',
+        });
+      }).catch((error) => {
+        ElMessage.error({
+          message: mode === 0 ? `冻结失败:${error}` : `解冻失败:${error}`,
+          type: 'error',
         });
       });
     }
@@ -362,7 +385,7 @@ export default {
         console.log(dataObj.data.length);
         dataObj.data.push(...res.data.data.map((item: any) => ({
           id: item.id,
-          qihao: `20${item.qihao}`,
+          drawnum: item.drawnum,
           front: item.front.split(' '),
           back: item.back.split(' '),
           isbot: item.isBot,
@@ -374,15 +397,20 @@ export default {
     }
 
     onMounted(() => {
-      // updateQiHaoOption();
+      // updatedrawnumOption();
       syncForeverBets();
       syncBets(0, 1, data.unOpenTicksOption);
       syncBets(1, 1, data.awardTicksOption);
       syncBets(2, 1, data.unAwardTicksOption);
     });
-
+    function tableRowClassName({ row }: Record<string, any>) {
+      if (row.disabled === true) {
+        return 'warning-row';
+      }
+      return '';
+    }
     return {
-      ...toRefs(data), FormatNumber, RanderAwardSSQ, syncForeverBets, ForeverBetsDelete, Combine, BetsDelete, syncBets, checkHistory,
+      ...toRefs(data), FormatNumber, tableRowClassName, FreezeForeverBet, RanderAwardSSQ, syncForeverBets, ForeverBetsDelete, Combine, BetsDelete, syncBets, checkHistory,
     };
   },
 };
@@ -429,5 +457,8 @@ li.ball {
   border-width:2px;
   border-style:solid;
   border-color: #5b85fe;
+}
+.warning-row {
+  background: oldlace;
 }
 </style>

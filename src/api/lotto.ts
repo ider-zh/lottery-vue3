@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2021-01-07 21:29:17
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 01:19:50
+ * @LastEditTime: 2021-03-02 01:49:51
  * @Description:
  */
 import request from '@/util/http';
@@ -50,6 +50,14 @@ export function deleteUserForeverBets(params: Record<string, any>) {
 export function getUserBets(params: Record<string, any>) {
   return request.request({
     url: '/lottery/lotto/bets',
+    method: 'get',
+    params,
+  });
+}
+
+export function freezeForever(params: Record<string, any>) {
+  return request.request({
+    url: '/lottery/lotto/foreverbets/freeze',
     method: 'get',
     params,
   });
