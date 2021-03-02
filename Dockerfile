@@ -8,7 +8,7 @@ RUN yarn config set registry https://registry.npm.taobao.org --global && \
   yarn  && \
   yarn build
 
-FROM nginx:alpine
+FROM nginx:alpine AS runtime
 LABEL maintainer="326737833@qq.com"
 COPY --from=builder /tmp/dist/ /usr/share/nginx/html/
 RUN  sed -i '/location \/ {/a        try_files $uri $uri/ /index.html last;' /etc/nginx/conf.d/default.conf
