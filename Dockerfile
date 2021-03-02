@@ -1,7 +1,7 @@
 FROM node:alpine AS build
 WORKDIR /tmp
 COPY $PWD ./
-ENV NODE_ENV production
+# ENV NODE_ENV production
 
 RUN yarn config set registry https://registry.npm.taobao.org --global && \
   yarn config set disturl https://npm.taobao.org/dist --global  && \
