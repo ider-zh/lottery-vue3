@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 01:36:35
+ * @LastEditTime: 2021-03-02 20:56:01
  * @Description:大乐透，选号机器
 -->
 <template lang="pug">
@@ -53,7 +53,7 @@
   .title
     span 中奖详情
 
-  LottoAward(:front="checkfrontball",:back="checkbackball")
+  LottoHistoryAward(:front="checkfrontball",:back="checkbackball")
     //- <!-- 期号选择 对话框 -->
   el-dialog(v-model="dialogQiHaoVisible",title="确认项目")
     el-form
@@ -76,7 +76,7 @@ import {
   reactive, toRefs, watch, onMounted, computed,
 } from 'vue';
 import LottoBall from '@/components/LottoBall.vue';
-import LottoAward from '@/components/LottoAward.vue';
+import LottoHistoryAward from '@/components/LottoHistoryAward.vue';
 
 import { Combine, FormatNumber } from '@/util/calcuate';
 import { ElMessage } from 'element-plus';
@@ -102,7 +102,7 @@ export default {
   name: 'Lotto',
   components: {
     LottoBall,
-    LottoAward,
+    LottoHistoryAward,
   },
   setup() {
     const store = useStore();

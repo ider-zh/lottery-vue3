@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2021-01-10 23:13:41
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 01:22:44
+ * @LastEditTime: 2021-03-02 20:52:15
  * @Description:大乐透历史中奖情况
 -->
 <template lang="pug">
@@ -61,7 +61,7 @@ export default {
 
     // 更新数据
     watchEffect(() => {
-      if (props.front.length >= 6 && props.back.length >= 1) { getWinner(); }
+      if (props.front.length >= 5 && props.back.length >= 2) { getWinner(); }
     });
 
     return { ...toRefs(data), getWinner };

@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 01:52:34
+ * @LastEditTime: 2021-03-02 20:55:51
  * @Description:大乐透,开奖信息
 -->
 <template lang="pug">
@@ -151,7 +151,7 @@
       :total="unAwardTicksOption.total",:current-page="unAwardTicksOption.page",@current-change="(val)=>{syncBets(2, val, unAwardTicksOption)}")
 
   el-dialog(v-model="dialogHistoryVisible",title="历史中奖")
-    LottoAward(:front="checkfront",:back="checkback")
+    LottoHistoryAward(:front="checkfront",:back="checkback")
 
 </template>
 
@@ -167,7 +167,7 @@ import {
   getUserForeverBets, deleteUserForeverBets, getUserBets, deleteUserBets, freezeForever,
 } from '@/api/lotto';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import LottoAward from '@/components/LottoAward.vue';
+import LottoHistoryAward from '@/components/LottoHistoryAward.vue';
 
 dayjs.extend(dayOfYear);
 
@@ -219,9 +219,9 @@ export interface SelectOpt {
 const PAGESIZE = 15;
 
 export default {
-  name: 'DoubleBall',
+  name: 'LottoAwardView',
   components: {
-    LottoAward,
+    LottoHistoryAward,
   },
   setup() {
     // 长期跟踪
