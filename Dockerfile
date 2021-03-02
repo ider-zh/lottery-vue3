@@ -10,7 +10,7 @@ RUN yarn config set registry https://registry.npm.taobao.org --global && \
 
 FROM nginx:alpine AS runtime
 LABEL maintainer="326737833@qq.com"
-COPY --from=builder /tmp/dist/ /usr/share/nginx/html/
+COPY --from=build /tmp/dist/ /usr/share/nginx/html/
 RUN  sed -i '/location \/ {/a        try_files $uri $uri/ /index.html last;' /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD nginx -g 'daemon off;'
