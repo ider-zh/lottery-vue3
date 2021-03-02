@@ -5,7 +5,7 @@ ENV NODE_ENV production
 
 RUN yarn config set registry https://registry.npm.taobao.org --global && \
   yarn config set disturl https://npm.taobao.org/dist --global  && \
-  yarn install  && \
+  yarn  && \
   yarn build
 
 FROM nginx:alpine
