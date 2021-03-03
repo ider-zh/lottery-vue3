@@ -3,7 +3,7 @@
  * @Author: ider
  * @Date: 2020-12-29 13:26:16
  * @LastEditors: ider
- * @LastEditTime: 2021-03-02 20:56:01
+ * @LastEditTime: 2021-03-03 14:39:14
  * @Description:大乐透，选号机器
 -->
 <template lang="pug">
@@ -24,7 +24,7 @@
       span 个前区
       em(style="color:blue;") {{ backs.length }}
       span 个后区, 共
-      em(style="color:green;") {{ Combine(fronts.length, 5) * backs.length }}
+      em(style="color:green;") {{ Combine(fronts.length, 5) * Combine(backs.length, 2) }}
       span 注
 
       el-button(type="text",style="margin-left:1em;",@click="fronts=[];backs=[]") 清空上方选号
